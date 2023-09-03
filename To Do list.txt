@@ -1,0 +1,6 @@
+- Github desktop
+- ReadMe
+- Docstrings
+- tests
+- visual app vs django web app?
+- data structure for Vessels? Queqed list?

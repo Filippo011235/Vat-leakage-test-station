@@ -3,18 +3,18 @@ from os import system
 
 # Dictionary containing menu options.
 menu = {}
-menu['0'] = "(-> In) Input new Vessel to In"
-menu['1'] = "(Out ->) Move OK Vessel from Out"
+menu['0'] = "(-> In) Input new Vat to In"
+menu['1'] = "(Out ->) Move OK Vat from Out"
 
 menu['T1'] = "---------- Tester 1 functions ----------"
-menu['2'] = "(In -> T1) Move Vessel In to Tester 1"
-menu['5'] = "(Corr -> T1) Move corrected Vessel to Tester 1"
-menu['8'] = "(T1 -> Out/Corr) Move tested Vessel out of Tester 1"
+menu['2'] = "(In -> T1) Move Vat In to Tester 1"
+menu['5'] = "(Corr -> T1) Move corrected Vat to Tester 1"
+menu['8'] = "(T1 -> Out/Corr) Move tested Vat out of Tester 1"
 
 menu['T2'] = "---------- Tester 2 functions ----------"
-menu['3'] = "(In -> T2) Move Vessel In to Tester 2"
-menu['6'] = "(Corr -> T2) Move corrected Vessel to Tester 2"
-menu['9'] = "(T2 -> Out/Corr) Move tested Vessel out of Tester 2"
+menu['3'] = "(In -> T2) Move Vat In to Tester 2"
+menu['6'] = "(Corr -> T2) Move corrected Vat to Tester 2"
+menu['9'] = "(T2 -> Out/Corr) Move tested Vat out of Tester 2"
 
 menu['End'] = "---------- Finish program ----------"
 menu['10'] = "Finish productive work shift :)"
@@ -38,13 +38,14 @@ def draw_factory_floor():
     for field in factory_fields:
         main_line = "".join([main_line,field,"\t"])
 
-    line_with_vessels = "*\t"
+    line_with_vats = "*\t"
     for index, field in enumerate(factory_fields):
+        # Preliminary simulation of Vats states.
         if index % 2:
-            line_with_vessels = "".join([line_with_vessels,
-                                         "Vessel","\t"])
+            line_with_vats = "".join([line_with_vats,
+                                         "Vat","\t"])
         else:
-            line_with_vessels = "".join([line_with_vessels,
+            line_with_vats = "".join([line_with_vats,
                                          "Empty","\t"])
 
     horizontal_bar = "*" * (3*len(main_line))
@@ -56,7 +57,7 @@ def draw_factory_floor():
     print(empty_line)
     print(main_line)
     print(empty_line)
-    print(line_with_vessels)
+    print(line_with_vats)
     print(empty_line)
     print(horizontal_bar)
 
@@ -64,14 +65,6 @@ def draw_factory_floor():
 
 def display_menu():
 
-    # is_int is used to verify and edit menu options printing.
-    def is_int(val):
-        try:
-            x = int(val)
-            return True
-        except ValueError:
-            return False
-        
     clear()
     draw_factory_floor()
     # print(f"Obecny Anzahl Tool: \t{VarFile.ANZAHL_TOOL}")
@@ -80,7 +73,7 @@ def display_menu():
     menu_lines = list(menu.keys())
     print("Opcje menu:")
     for position in menu_lines:
-        if is_int(position):
+        if isinstance(position, int):
             print("\t".expandtabs(2), position, "\t", menu[position])
         else:
             print()
@@ -123,7 +116,7 @@ def Change_Eingang():
     else:
         ################### TO DO #################
         print("Eingang List miało być jedynkami i zerami!")
-        ConfirmMechanism
+        ConfirmMechanism()
         raise ValueError("Eingang List miało być jedynkami i zerami!")
     
     ConfirmMechanism()

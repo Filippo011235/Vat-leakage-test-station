@@ -1,46 +1,41 @@
+"""Module containing class that simulates a field, buffer, in a factory.
+
+Classes:
+    FactoryField
+"""
+
 from vat import Vat
 
-
 class FactoryField:
-    """ Kokos
-    Kokos kokos
+    """Simulate a physical place on which Vats are being stored/processed.
+
+    Initial example of usage include "In", and "Out" buffors, tester stations
+    (which are a subclass in separate module and handle testing simulation)
+    and vat "Correction" station. 
+
+    Attributes:
+        name_ (str): Name of the field.
+        current_vat (class Vat): Current vat that is being stored(or not).
     """
 
     def __init__(self, field_name="Bufor") -> None:
-        """
-        A class used to represent an Animal
-
-        ...
-
-        Attributes
-        ----------
-        says_str : str
-            a formatted string to print out what the animal says
-        name : str
-            the name of the animal
-        sound : str
-            the sound that the animal makes
-        num_legs : int
-            the number of legs the animal has (default 4)
-
-        Methods
-        -------
-        says(sound=None)
-            Prints the animals name and what sound it makes
+        """Initiate a field with a given name and empty slot for a Vat.
+        
+        Args:
+            field_name : str which will become name of the Field.
         """
         self.name_ = field_name
         self.current_vat = None
-    
-    def receive_vat(self, new_vat: Vat):
-        """Assign a new_vat to an empty FactoryField
 
-        Parameters:
-        new_vat -- new Vat class object to fill this Field
+    def set_vat(self, new_vat: Vat):
+        """Assign a new_vat to an empty FactoryField.
+
+        Args:
+            new_vat : new Vat class object to fill this Field.
 
         Return:
-        bool -- True, if assigned correctly, False if Field is taken
+            bool : True, if assigned correctly, False if Field is taken.
         """
-
         if self.current_vat is None:
             self.current_vat = new_vat
             print(f"Field {self.name_} received {new_vat.get_barcode()}")
@@ -55,7 +50,7 @@ class FactoryField:
         if self.current_vat is not None:
             return self.current_vat
         else:
-            print(f"Field {self.name_} has no vat inside")
+            # print(f"Field {self.name_} has no vat inside")
             return None
 
     def delete_vat(self):
@@ -66,3 +61,6 @@ class FactoryField:
         else:
             print(f"Field {self.name_} has no vat inside!")
             return False
+
+    def get_name(self):
+        return self.name_

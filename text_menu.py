@@ -4,43 +4,26 @@ from os import system
 
 def clear(): system('cls')
 
-def draw_factory_floor(factory_fields):
+def draw_factory_floor(factory_status):
     """Visualize all FactoryFields and Vats information.
 
     Args:
-        factory_fields (list of FactoryField obj) : List with information
+        factory_status (list of FactoryField obj) : List with information
                                                 for drawing the factory floor
     """
 
     # Main information line, to which information will be added,
     # and whole frame will be based upon.
     main_line = "Fields:\t"
-    for field in factory_fields:
-        main_line = "".join([main_line,field.get_name(), "\t"])
-
     # Line holding information about Vats in Factoryfields
     line_with_vats = "Vats:\t"
-    for field in factory_fields:
-        # Preliminary simulation of Vats states.
-        if field.get_vat():
-            line_with_vats = "".join([line_with_vats,
-                                    str(field.get_vat().get_barcode()),
-                                    "\t"])
-        else:
-            line_with_vats = "".join([line_with_vats, "Empty", "\t"])
-
     # Line holding information about Vats' test results
     line_with_results = "Test:\t"
-    for field in factory_fields:
-        if field.get_vat():
-            if field.get_vat().get_test_result():
-                line_with_results = "".join([line_with_results, "Pos", "\t"])
-            elif field.get_vat().get_test_result() is False:
-                line_with_results = "".join([line_with_results, "Neg", "\t"])
-            else: # None
-                line_with_results = "".join([line_with_results, "---", "\t"])
-        else:
-            line_with_results = "".join([line_with_results, "---", "\t"])
+
+    for field in factory_status:
+        main_line = "".join([main_line,field[0], "\t"])
+        line_with_vats = "".join([line_with_vats, str(field[1]), "\t"])
+        line_with_results = "".join([line_with_results, field[2], "\t"])
 
     horizontal_bar = "*" * (2*len(main_line))
     empty_line = "*"
@@ -60,19 +43,19 @@ def draw_factory_floor(factory_fields):
     for line in factory_outline:
         print(line)
 
-def display_menu(menu_options, factory_fields):
+def display_menu(menu_options, factory_status):
     """Display factory visualization and all menu options.
     
     Args:
         menu_options (dict) : Dictionary with int keys as options numbers and
                             str keys for section dividers. 
                             Values are options/sections description.
-        factory_fields (list of FactoryField obj) : List with information
+        factory_status (list of FactoryField obj) : List with information
                                                 for drawing the factory floor
     """
 
     clear()
-    draw_factory_floor(factory_fields)
+    draw_factory_floor(factory_status)
     print("Menu options:")
     for position in menu_options.keys():
         # Section titles are str keys, thus making section dividers easy to put

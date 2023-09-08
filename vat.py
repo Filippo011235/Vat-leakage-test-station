@@ -6,13 +6,14 @@ Classes:
 
 import random
 
-"""VAT_MODELS contains example model sizes of the vats."""
+# Vat models - keys must be integers!
 VAT_MODELS = {
     1: "900  x 900  x 600",
     2: "1200 x 1500 x 900",
     3: "1600 x 2000 x 1200",
     4: "2000 x 2400 x 1600",
 }
+"""VAT_MODELS contains example model sizes of the vats."""
 
 BARCODE_MIN = 1
 BARCODE_MAX = 1000

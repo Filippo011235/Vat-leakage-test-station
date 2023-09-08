@@ -38,7 +38,7 @@ class FactoryField:
         """
         if self.current_vat is None:
             self.current_vat = new_vat
-            print(f"Field {self.name_} received {new_vat.get_barcode()}")
+            # print(f"Field {self.name_} received {new_vat.get_barcode()}")
             return True
         else:
             print(f"Field {self.name_} is already taken by \

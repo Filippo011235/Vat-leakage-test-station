@@ -63,6 +63,18 @@ def display_menu(menu_options, factory_status):
             print()
         print("\t".expandtabs(2), position, "\t", menu_options[position])
 
+    while True:
+        try:
+            user_input = int(input("What would you like to do? Enter int: "))
+        except (ValueError, KeyboardInterrupt):
+            print("What was that? Try again with an int!")
+            continue
+        if user_input in menu_options.keys():
+            return user_input
+        else:
+            print("Incorrect option, try again!")
+
+
 
 # def Change_Tool():
 #     # print(f"Obecny {VarFile.ANZAHL_TOOL}")

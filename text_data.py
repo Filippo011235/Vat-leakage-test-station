@@ -15,29 +15,29 @@ TEST_FIXTURE_ID = "T"
 # For menu options:
 FINISH_CONST = 0
 """Integer used to break out of the menu loop and quit the program"""
-INPUT_VAT_DISTINGUISHER = "(-> In)"
+ADD_INPUT_VAT_ID = "(-> In)"
 """Distinguishes "add Vat to Input" menu option"""
-OUTPUT_VAT_DISTINGUISHER = "(Out ->)"
+DEL_OUTPUT_VAT_ID = "(Out ->)"
 """Distinguishes "remove Vat from Output" menu option"""
-TRANSFER_VAT_DISTINGUISHER = "(<->)"
+MOVE_VAT_ID = "(<->)"
 """Distinguishes "transfer Vat between Fields" menu option"""
 
 # Factory buffer fields names.
 # To Do - .startswidth("T") for TestFixture
-FACTORY_FIELDS_NAMES = [INPUT_ID,
+FACTORY_FIELDS_NAMES = (INPUT_ID,
                         CORRECTION_ID,
                         TEST_FIXTURE_ID + "1",
                         TEST_FIXTURE_ID + "2",
                         OUTPUT_ID,
-                        ]
+                        )
 
 # Dictionary containing menu options and sections dividers.
 # To Do - rules - str dividers, int options, "(X <-> Y)" for Factory Field, 
 TEXT_MENU = {
     "Mov": "---------- Vat logistics ----------",
-    1: INPUT_VAT_DISTINGUISHER + " Input new Vat to In",
-    2: INPUT_VAT_DISTINGUISHER + " Move OK Vat from Out",
-    3: TRANSFER_VAT_DISTINGUISHER + " Transfer Vat between Fields",
+    1: ADD_INPUT_VAT_ID + " Input new Vat to In",
+    2: DEL_OUTPUT_VAT_ID + " Move OK Vat from Out",
+    3: MOVE_VAT_ID + " Transfer Vat between Fields",
 
     "End": "---------- Finish program ----------",
     FINISH_CONST: "Finish productive work shift :)",

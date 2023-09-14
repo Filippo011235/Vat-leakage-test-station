@@ -44,14 +44,17 @@ class TestFixture(FactoryField):
             print(f"{self.name_} has no correct Vat assigned!")
             return False
 
-        sleep(15)
+        test_time = 5
+        print(f"Building pressure, which'll take approx. {test_time} sec.")
+        sleep(test_time)
 
         result = randint(1,100)
         if result <= 75:
             self.current_vat.set_test_result(True)
+            return True
         else:
             self.current_vat.set_test_result(False)
-        
+            return False
 
 
 

@@ -4,12 +4,14 @@ Classes:
     Factory
 """
 
-from text_data import INPUT_ID, CORRECTION_ID, TEST_FIXTURE_ID, OUTPUT_ID, \
+from text_data import FINISH_CONST, INPUT_ID, TEST_FIXTURE_ID, OUTPUT_ID, \
                       ADD_INPUT_VAT_ID, DEL_OUTPUT_VAT_ID, MOVE_VAT_ID, \
-                      FINISH_CONST
+                      TEST_VAT_ID
 from vat import Vat, VAT_MODELS
 from factory_field import FactoryField
 from test_fixture import TestFixture
+
+from random import randint
 
 class Factory:
     """Simulate whole factory, contain and operate on FactoryFields and Vats.
@@ -28,7 +30,7 @@ class Factory:
         """
         # Mapping menu_options numeration to methods
         self.methods_mapping = {}
-        # To Do - verify is menu_options a correct dict?
+        # To Do - verify is menu_options a correct dict? 1 In, 1 Out, 1 TF
 
         self.methods_mapping[FINISH_CONST] = self.finish_entered_do_nothing
         for k, v in menu_options.items():
@@ -42,6 +44,10 @@ class Factory:
                     self.methods_mapping[k] = self.remove_vat_from_output
                 elif MOVE_VAT_ID in v:
                     self.methods_mapping[k] = self.transfer_vat_between_fields
+                elif TEST_VAT_ID in v:
+                    self.methods_mapping[k] = self.test_vat
+                # elif AUTO_MODE_ID in v:
+                #     self.methods_mapping[k] = self.test_vat
                 else:
                     continue
 
@@ -53,7 +59,7 @@ class Factory:
         """Look for a free Field with input ID, and assign a new Vat to it.
 
         Return:
-            str : informing whether the operation was succesful or not.
+            str : Informing whether the operation was succesful or not.
         """
         # Look for a free input buffer...
         for field in self.factory_fields:
@@ -63,22 +69,27 @@ class Factory:
             if field.get_vat() is not None:
                 continue
 
+            # OPTION 1 - ASKING USER FOR NEW VAT MODEL:
             # ... Yay, now ask about new Vat, and verify.
-            vat_model_min, *_, vat_model_max = list(VAT_MODELS.keys())
-            input_text = f"Please enter model ({vat_model_min}" \
-                         + f" - {vat_model_max}) of the new Vat: "
-            while True:
-                try: # check for correct input type
-                    new_model = int(input(input_text))
-                except (ValueError, KeyboardInterrupt, EOFError):
-                    print("Enter correct model, silly!")
-                    continue
+            # vat_model_min, *_, vat_model_max = list(VAT_MODELS.keys())
+            # input_text = f"Please enter model ({vat_model_min}" \
+            #              + f" - {vat_model_max}) of the new Vat: "
+            # while True:
+            #     try: # check for correct input type
+            #         new_model = int(input(input_text))
+            #     except (ValueError, KeyboardInterrupt, EOFError):
+            #         print("Enter correct model, silly!")
+            #         continue
 
-                # check for correct value of the model
-                if vat_model_min <= new_model <= vat_model_max:
-                    break # all good, break while loop
-                else:
-                    print("Enter correct model, silly!")
+            #     # check for correct value of the model
+            #     if vat_model_min <= new_model <= vat_model_max:
+            #         break # all good, break while loop
+            #     else:
+            #         print("Enter correct model, silly!")
+
+            # OPTION 2 - MAKING NEW VAT WITH A RAND MODEL:
+            vat_model_min, *_, vat_model_max = list(VAT_MODELS.keys())
+            new_model = randint(vat_model_min, vat_model_max)
 
             field.set_vat(Vat(new_model))
             return f"Vat was correctly assigned to {field.get_name()}"
@@ -90,7 +101,7 @@ class Factory:
         """Look for a taken Output Field, and confirm before removing a Vat.
 
         Return:
-            str : informing whether the operation was succesful or not.
+            str : Informing whether the operation was succesful or not.
         """
         # Look for a taken output buffer...
         for field in self.factory_fields:
@@ -132,13 +143,14 @@ class Factory:
         """Ask user for a busy Field, then an empty one, and move the Vat.
 
         Return:
-            str : informing whether the operation was succesful or not.
+            str : Informing whether the operation was succesful or not.
         """
         def print_enum_fields():
             """Print out all fields in the Factory."""
             for idx, field in enumerate(self.factory_fields):
                 print(f"{idx}. {field.get_name()} - " \
                       + f"{field.get_vat()}")
+            print()
 
         # Establish field for the source vat:
         print_enum_fields()
@@ -164,8 +176,6 @@ class Factory:
 
             vat_to_transfer = source_field.get_vat()
             break
-
-
 
         # Now, establish field for the destination vat:
         print_enum_fields()
@@ -196,6 +206,54 @@ class Factory:
             # break
 
         return f"{vat_to_transfer} was moved to {dest_field.get_name()}"
+
+    def test_vat(self):
+        """Look for a Vat on a Test Field and test it.
+
+        Return:
+            str : Informing whether the operation was succesful or not.
+        """
+        print("Which Test Fixture would you like to start? ")
+        for idx, field in enumerate(self.factory_fields):
+            if not field.get_name().startswith(TEST_FIXTURE_ID):
+                continue
+            if field.get_vat() is None:
+                print(f"--. {field.get_name()} - has no Vat")
+                continue
+            # Print Test Fields, with a Vat inside.
+            print(f"{idx}. {field.get_name()} - " \
+                    + f"{field.get_vat()}")
+        print("Enter 100, if you want to cancel this operation\n")
+        
+        # TO DO 100 - hardcoded var
+
+
+    # to do NOTE Jak nie ma takich pol to co wtedy?
+
+
+        while True:
+            try: # Check for correct input type.
+                tf_no = int(input("Enter index of the desired Test Fixture: "))
+            except (ValueError, KeyboardInterrupt, EOFError):
+                print("What was that? Try again")
+                continue
+
+            try:
+                test_field = self.factory_fields[tf_no]
+            except IndexError:
+                if tf_no is 100:
+                    return("Canceling this operation")
+                print("Enter field according to the table, silly!")
+                continue
+
+            if test_field.get_vat() is None:
+                print("Selected Field has no Vat! Try again")
+                continue
+
+            if test_field.test_vat():
+                return "Vat has passed The Great Trial!"
+            else:
+                return "Vat has failed and has to be corrected!"
 
     def get_factory_status(self):
         """

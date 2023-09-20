@@ -69,5 +69,3 @@ class Vat:
 
     def set_test_result(self, vat_test_result: bool):
         self.test_result = vat_test_result
-
-

@@ -41,8 +41,8 @@ class FactoryField:
             # print(f"Field {self.name_} received {new_vat.get_barcode()}")
             return True
         else:
-            print(f"Field {self.name_} is already taken by \
-                    {self.current_vat.get_barcode()}! Take it back first!")
+            print(f"Field {self.name_} is already taken by"
+                    f"{self.current_vat.get_barcode()}! Take it back first!")
             return False
 
     def get_vat(self):

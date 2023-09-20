@@ -4,9 +4,9 @@ Classes:
     Factory
 """
 
-from text_data import FINISH_CONST, INPUT_ID, TEST_FIXTURE_ID, OUTPUT_ID, \
-                      ADD_INPUT_VAT_ID, DEL_OUTPUT_VAT_ID, MOVE_VAT_ID, \
-                      TEST_VAT_ID
+from text_data import (FINISH_CONST, INPUT_ID, TEST_FIXTURE_ID, OUTPUT_ID,
+                      ADD_INPUT_VAT_ID, DEL_OUTPUT_VAT_ID, MOVE_VAT_ID,
+                      TEST_VAT_ID)
 from vat import Vat, VAT_MODELS
 from factory_field import FactoryField
 from test_fixture import TestFixture
@@ -36,8 +36,8 @@ class Factory:
         for k, v in menu_options.items():
             # Focus on menu options(int keys), not section dividers(str keys).
             if isinstance(k, int): 
-                # If menu option description matches a Distinguisher, connect \
-                # this option numeric value with the method of Factory class
+                # If menu option description matches a Distinguisher, connect
+                # this option numeric value with the method of Factory class.
                 if ADD_INPUT_VAT_ID in v:
                     self.methods_mapping[k] = self.add_vat_to_input
                 elif DEL_OUTPUT_VAT_ID in v:
@@ -72,8 +72,8 @@ class Factory:
             # OPTION 1 - ASKING USER FOR NEW VAT MODEL:
             # ... Yay, now ask about new Vat, and verify.
             # vat_model_min, *_, vat_model_max = list(VAT_MODELS.keys())
-            # input_text = f"Please enter model ({vat_model_min}" \
-            #              + f" - {vat_model_max}) of the new Vat: "
+            # input_text = (f"Please enter model ({vat_model_min}"
+            #              + f" - {vat_model_max}) of the new Vat: ")
             # while True:
             #     try: # check for correct input type
             #         new_model = int(input(input_text))
@@ -114,8 +114,8 @@ class Factory:
             # ... Yay, now ask for confirmation.
             vat_ID = field.get_vat().get_barcode()
             f_name = field.get_name()
-            input_text = f"Do you want to take out " \
-                            + f"{vat_ID} from {f_name} (y/n) ? "
+            input_text = (f"Do you want to take out "
+                            f"{vat_ID} from {f_name} (y/n) ? ")
 
             # To Do: weryfikacja czy Vat ma pozytywny test przed usunieciem
 
@@ -148,14 +148,13 @@ class Factory:
         def print_enum_fields():
             """Print out all fields in the Factory."""
             for idx, field in enumerate(self.factory_fields):
-                print(f"{idx}. {field.get_name()} - " \
-                      + f"{field.get_vat()}")
+                print(f"{idx}. {field.get_name()} - {field.get_vat()}")
             print()
 
         # Establish field for the source vat:
         print_enum_fields()
-        source_text = "From which field would you like " \
-                        + "to move the Vat? Enter int: "
+        source_text = ("From which field would you like "
+                        "to move the Vat? Enter int: ")
         while True:
             try: # Check for correct input type.
                 source_field_no = int(input(source_text))
@@ -179,8 +178,8 @@ class Factory:
 
         # Now, establish field for the destination vat:
         print_enum_fields()
-        dest_text = "OK, now, where do you want to transfer it?" \
-                            + " Enter int: "
+        dest_text = ("OK, now, where do you want to transfer it?"
+                     " Enter int: ")
         while True:
             # To Do: Function for check whether input is int
             try: # Check for correct input type.
@@ -221,15 +220,10 @@ class Factory:
                 print(f"--. {field.get_name()} - has no Vat")
                 continue
             # Print Test Fields, with a Vat inside.
-            print(f"{idx}. {field.get_name()} - " \
-                    + f"{field.get_vat()}")
+            print(f"{idx}. {field.get_name()} - {field.get_vat()}")
         print("Enter 100, if you want to cancel this operation\n")
-        
+
         # TO DO 100 - hardcoded var
-
-
-    # to do NOTE Jak nie ma takich pol to co wtedy?
-
 
         while True:
             try: # Check for correct input type.

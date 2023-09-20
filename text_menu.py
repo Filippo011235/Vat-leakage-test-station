@@ -1,8 +1,19 @@
-"""Module containing text menu related functions and data."""
+"""Module containing text menu related functions.
+
+Functions:
+    clear - Auxiliary function for clearing terminal screen.
+    confirm_mechanism - Auxiliary function for giving user time after action.
+    draw_factory_floor - Based on the status of Factory, draw visualisation.
+    display_menu - Handles displaying menu and asking user for input/option.
+"""
 
 from os import system
 
 def clear(): system('cls')
+
+def confirm_mechanism():
+    """After choosing an option/doing an action, stop menu_display loop."""
+    input("Confirm with Entern key")
 
 def draw_factory_floor(factory_status):
     """Visualize all FactoryFields and Vats information.
@@ -51,14 +62,16 @@ def display_menu(menu_options, factory_status):
                             str keys for section dividers. 
                             Values are options/sections description.
         factory_status (list of FactoryField obj) : List with information
-                                                for drawing the factory floor
+                                                for drawing the factory floor.
+    Return:
+        user_input (int) : number representing one of the menu options keys.
     """
 
     clear()
     draw_factory_floor(factory_status)
     print("Menu options:")
     for position in menu_options.keys():
-        # Section titles are str keys, thus making section dividers easy to put
+        # Section titles are str, thus making section dividers easy to put.
         if isinstance(position, str):
             print()
         print("\t".expandtabs(2), position, "\t", menu_options[position])
@@ -73,14 +86,3 @@ def display_menu(menu_options, factory_status):
             return user_input
         else:
             print("Incorrect option, try again!")
-
-# To Do usun to
-# def incorrect_option():
-#     """Inform that incorrect option was chosen."""
-#     print("\n Incorrect data was inputted! \n")
-    
-#     confirm_mechanism()
-
-def confirm_mechanism():
-    """After choosing an option/doing an action, stop menu_display loop."""
-    input("Confirm with Entern key")

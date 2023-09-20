@@ -31,7 +31,7 @@ class TestFixture(FactoryField):
         """
         FactoryField.__init__(self, field_name)
         self.pressure = new_pressure
-        
+
     def get_pressure(self):
         return self.pressure
 
@@ -55,6 +55,3 @@ class TestFixture(FactoryField):
         else:
             self.current_vat.set_test_result(False)
             return False
-
-
-

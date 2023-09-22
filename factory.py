@@ -6,7 +6,7 @@ Classes:
 
 from text_data import (FINISH_CONST, INPUT_ID, TEST_FIXTURE_ID, OUTPUT_ID,
                       ADD_INPUT_VAT_ID, DEL_OUTPUT_VAT_ID, MOVE_VAT_ID,
-                      TEST_VAT_ID)
+                      TEST_VAT_ID, CANCEL_OPERATION)
 from vat import Vat, VAT_MODELS
 from factory_field import FactoryField
 from test_fixture import TestFixture
@@ -21,16 +21,20 @@ class Factory:
         factory_fields : List that stores buffer fields making the scene.
     """
 
-    def __init__(self, menu_options: dict, factory_fields_names=["Bufor"]) -> None:
+    def __init__(self, menu_options: dict, factory_fields_names: list=["Bufor"]) -> None:
         """Init. a factory with a list of factory fields names and menu dict.
 
         Args:
             menu_options : Shared dictionary, on which method mapping is based.
             factory_fields_names : List of str names for Factory fields.
         """
+        # Check whether menu has all non-empty values(keys descriptions).
+        if not any(menu_options.values()):
+            raise ValueError("\nmenu_options hasn't been properly declared!\n")
+
         # Mapping menu_options numeration to methods
         self.methods_mapping = {}
-        # To Do - verify is menu_options a correct dict? 1 In, 1 Out, 1 TF
+        # TODO - verify whther menu_options a correct dict? 1 In, 1 Out, 1 TF?
 
         self.methods_mapping[FINISH_CONST] = self.finish_entered_do_nothing
         for k, v in menu_options.items():
@@ -54,6 +58,54 @@ class Factory:
         # Factory fields init, by analysing strings in list of names.
         self.factory_fields = [TestFixture(x) if x.startswith(TEST_FIXTURE_ID)
                             else FactoryField(x) for x in factory_fields_names]
+
+    def provide_fields_for_methods(self, field_ID: str="", 
+                                   check_for_full: bool=False):
+        """ Yield Field which matches criteria, or print info about it.
+
+        Arguments:
+            field_ID : str which will filter Fields, based on their name.
+            check_for_full : boolean for filtering Fields with(out) a Vat.
+        Yield:
+            field : FactoryField matching filters.
+            None : when there is nothing more to yield.
+        """
+        if check_for_full:
+            desired_state = Vat
+        else:
+            desired_state = None
+
+        for idx, field in enumerate(self.factory_fields):
+            # Avoiding nested if with negation and continue.
+            # Filter Fields with different name.
+            if not field.get_name().startswith(field_ID):
+                continue
+
+            # Filter Fields with undesired Vat occupancy.
+            # If field_ID is "", then don't filter anything, don't look at Vat.
+            if field.get_vat() is not desired_state and field_ID is not "":
+                # For test Vat operation, inform that there is an empty Field.
+                if field_ID is TEST_VAT_ID:
+                    print(f"--. {field.get_name()} - has no Vat")
+                continue
+
+            # For test and transfer operations, print the Fields.
+            if field_ID is TEST_VAT_ID or MOVE_VAT_ID:
+                print(f"{idx}. {field.get_name()} - {field.get_vat()}")
+
+                # For last element, additionally print cancelation option.
+                if idx is self.factory_fields[-1]:
+                    print(f"Enter {CANCEL_OPERATION}, if you want to ",
+                          "cancel this operation\n")
+
+            else: # Input, output operations.
+                yield field
+
+        # TBC
+
+        # Final yield - for test, transfer - all info has been printed.
+        # For input, output - no Field has satisfied criteria.
+        yield None
 
     def add_vat_to_input(self):
         """Look for a free Field with input ID, and assign a new Vat to it.
@@ -223,7 +275,7 @@ class Factory:
             print(f"{idx}. {field.get_name()} - {field.get_vat()}")
         print("Enter 100, if you want to cancel this operation\n")
 
-        # TO DO 100 - hardcoded var
+        # TODO 100 - hardcoded var
 
         while True:
             try: # Check for correct input type.
@@ -250,10 +302,11 @@ class Factory:
                 return "Vat has failed and has to be corrected!"
 
     def get_factory_status(self):
-        """
+        """Return tuples with info. about Fields, Vats and tests, for display.
 
         Return:
-            
+            factory_status : tuple containing tuples with info. for each Field.
+                             (Field name, Vat barcode, Vat test result)
         """
         factory_status = []
         for field in self.factory_fields:
@@ -271,7 +324,7 @@ class Factory:
         return tuple(factory_status)
 
     def execute_user_input(self, users_wish):
-        """Based on user input, and method mapping, execute according method"""
+        """Based on user input, and methods mapping, execute method."""
         return self.methods_mapping[int(users_wish)]()
 
     def finish_entered_do_nothing(self):

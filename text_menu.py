@@ -31,10 +31,14 @@ def draw_factory_floor(factory_status):
     # Line holding information about Vats' test results
     line_with_results = "Test:\t"
 
-    for field in factory_status:
-        main_line = "".join([main_line,field[0], "\t"])
-        line_with_vats = "".join([line_with_vats, str(field[1]), "\t"])
-        line_with_results = "".join([line_with_results, field[2], "\t"])
+    # factory_status contains tuples with info:
+    # [0] FactoryField name, 
+    # [1] (if any) Vat code, 
+    # [2] (if any) test result
+    for field_stats in factory_status:
+        main_line = "".join([main_line,field_stats[0], "\t"])
+        line_with_vats = "".join([line_with_vats, str(field_stats[1]), "\t"])
+        line_with_results = "".join([line_with_results, field_stats[2], "\t"])
 
     horizontal_bar = "*" * (2*len(main_line))
     empty_line = "*"

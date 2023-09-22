@@ -39,7 +39,7 @@ class TestFixture(FactoryField):
         self.pressure = new_pressure
 
     def test_vat(self):
-        """Simulate leakage test of a vat. Return True if OK, False if NOK"""
+        """Simulate leakage test of a vat. Return True if OK, False if NOK."""
         if not isinstance(self.current_vat, Vat):
             print(f"{self.name_} has no correct Vat assigned!")
             return False

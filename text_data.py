@@ -15,6 +15,8 @@ TEST_FIXTURE_ID = "T"
 # For menu options:
 FINISH_CONST = 0
 """Integer used to break out of the menu loop and quit the program."""
+CANCEL_OPERATION = 100
+"""Int. for input to cancel operations, such as transfer or test Vat."""
 ADD_INPUT_VAT_ID = "(-> In)"
 """Distinguishes "add Vat to Input" menu option."""
 DEL_OUTPUT_VAT_ID = "(Out ->)"

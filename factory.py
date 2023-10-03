@@ -12,6 +12,7 @@ from factory_field import FactoryField
 from test_fixture import TestFixture
 
 from random import randint
+from types import NoneType
 
 class Factory:
     """Simulate whole factory, contain and operate on FactoryFields and Vats.
@@ -61,7 +62,9 @@ class Factory:
 
     def provide_fields_for_methods(self, field_ID: str="", 
                                    check_for_full: bool=False):
-        """ Yield Field which matches criteria, or print info about it.
+        """ 
+        TODO poprawic docstring
+        Yield Field which matches criteria, or print info about it.
 
         Arguments:
             field_ID : str which will filter Fields, based on their name.
@@ -73,7 +76,7 @@ class Factory:
         if check_for_full:
             desired_state = Vat
         else:
-            desired_state = None
+            desired_state = NoneType
 
         for idx, field in enumerate(self.factory_fields):
             # Avoiding nested if with negation and continue.
@@ -82,30 +85,28 @@ class Factory:
                 continue
 
             # Filter Fields with undesired Vat occupancy.
-            # If field_ID is "", then don't filter anything, don't look at Vat.
-            if field.get_vat() is not desired_state and field_ID is not "":
+            # If field_ID is "", then don't filter according to Vat state.
+            if not isinstance(field.get_vat(), desired_state) and field_ID is not "":
                 # For test Vat operation, inform that there is an empty Field.
-                if field_ID is TEST_VAT_ID:
-                    print(f"--. {field.get_name()} - has no Vat")
+                if field_ID is TEST_FIXTURE_ID:
+                    print(f"--. {field.get_name()} - has no Vat to test.")
                 continue
 
             # For test and transfer operations, print the Fields.
-            if field_ID is TEST_VAT_ID or MOVE_VAT_ID:
+            if TEST_FIXTURE_ID in field_ID or field_ID == "":
                 print(f"{idx}. {field.get_name()} - {field.get_vat()}")
+            # Input, output operations - return index of desired Field.
+            else:
+                return idx
 
-                # For last element, additionally print cancelation option.
-                if idx is self.factory_fields[-1]:
-                    print(f"Enter {CANCEL_OPERATION}, if you want to ",
-                          "cancel this operation\n")
+        # After last element, additionally print cancelation option.
+        if field_ID is not (INPUT_ID or OUTPUT_ID):
+            print(f"Enter {CANCEL_OPERATION}, if you want to",
+                            "cancel this operation\n")
 
-            else: # Input, output operations.
-                yield field
-
-        # TBC
-
-        # Final yield - for test, transfer - all info has been printed.
+        # For test, transfer - all info has been printed.
         # For input, output - no Field has satisfied criteria.
-        yield None
+        return None
 
     def add_vat_to_input(self):
         """Look for a free Field with input ID, and assign a new Vat to it.
@@ -113,14 +114,16 @@ class Factory:
         Return:
             str : Informing whether the operation was succesful or not.
         """
-        # Look for a free input buffer...
-        for field in self.factory_fields:
-            # Avoiding nested if's with "not" and "continue"
-            if not field.get_name().startswith(INPUT_ID):
-                continue
-            if field.get_vat() is not None:
-                continue
+        # Look for a free input buffer... 
+        # for field in self.factory_fields:
+        #     # Avoiding nested if's with "not" and "continue"
+        #     if not field.get_name().startswith(INPUT_ID):
+        #         continue
+        #     if field.get_vat() is not None:
+        #         continue
 
+        input_field_idx = self.provide_fields_for_methods(INPUT_ID)
+        if isinstance(input_field_idx, int):
             # OPTION 1 - ASKING USER FOR NEW VAT MODEL:
             # ... Yay, now ask about new Vat, and verify.
             # vat_model_min, *_, vat_model_max = list(VAT_MODELS.keys())
@@ -143,11 +146,14 @@ class Factory:
             vat_model_min, *_, vat_model_max = list(VAT_MODELS.keys())
             new_model = randint(vat_model_min, vat_model_max)
 
-            field.set_vat(Vat(new_model))
-            return f"Vat was correctly assigned to {field.get_name()}"
+            self.factory_fields[input_field_idx].set_vat(Vat(new_model))
+            dest_field_name = self.factory_fields[input_field_idx].get_name()
+            
+            return f"Vat was correctly assigned to {dest_field_name}"
 
         # If no free buffer has been found, operation has failed
-        return "\n Sorry! No available Input buffers :( \n"
+        else: 
+            return "\n Sorry! No available Input buffers :( \n"
 
     def remove_vat_from_output(self):
         """Look for a taken Output Field, and confirm before removing a Vat.
@@ -156,20 +162,17 @@ class Factory:
             str : Informing whether the operation was succesful or not.
         """
         # Look for a taken output buffer...
-        for field in self.factory_fields:
-            # Avoiding nested if's with "continue".
-            if not field.get_name().startswith(OUTPUT_ID):
-                continue
-            if field.get_vat() is None:
-                continue
-
+        output_field_idx = self.provide_fields_for_methods(OUTPUT_ID, True)
+        if isinstance(output_field_idx, int):
             # ... Yay, now ask for confirmation.
-            vat_ID = field.get_vat().get_barcode()
-            f_name = field.get_name()
+            output_field = self.factory_fields[output_field_idx]
+
+            vat_ID = output_field.get_vat().get_barcode()
+            f_name = output_field.get_name()
             input_text = (f"Do you want to take out "
                             f"{vat_ID} from {f_name} (y/n) ? ")
 
-            # To Do: weryfikacja czy Vat ma pozytywny test przed usunieciem
+            # TODO: weryfikacja czy Vat ma pozytywny test przed usunieciem
 
             while True:
                 try:
@@ -180,16 +183,18 @@ class Factory:
 
                 # Check for correct string.
                 if decision == "y":
-                    field.delete_vat()
+                    self.factory_fields[output_field_idx].delete_vat()
                     return f"Vat {vat_ID} was pushed out from {f_name}"
                 elif decision == "n":
                     print(f"Ok, I'm leaving {vat_ID} alone.")
                     break # all good, break while loop
                 else:
                     print("Enter correct input (y/n), silly!")
-
+        else:
+            print("No taken Output Field was found.")
+        
         # Every field was analysed and no Vat was pushed out
-        return f"No Vat has been harmed during making of this operation."
+        return f"No Vat has been harmed during this operation."
 
     def transfer_vat_between_fields(self):
         """Ask user for a busy Field, then an empty one, and move the Vat.
@@ -197,17 +202,12 @@ class Factory:
         Return:
             str : Informing whether the operation was succesful or not.
         """
-        def print_enum_fields():
-            """Print out all fields in the Factory."""
-            for idx, field in enumerate(self.factory_fields):
-                print(f"{idx}. {field.get_name()} - {field.get_vat()}")
-            print()
-
         # Establish field for the source vat:
-        print_enum_fields()
+        self.provide_fields_for_methods()
         source_text = ("From which field would you like "
                         "to move the Vat? Enter int: ")
         while True:
+            # TODO obsługa cancel operation
             try: # Check for correct input type.
                 source_field_no = int(input(source_text))
             except (ValueError, KeyboardInterrupt, EOFError):
@@ -229,11 +229,11 @@ class Factory:
             break
 
         # Now, establish field for the destination vat:
-        print_enum_fields()
+        self.provide_fields_for_methods()
         dest_text = ("OK, now, where do you want to transfer it?"
                      " Enter int: ")
         while True:
-            # To Do: Function for check whether input is int
+            # TODO: Function for check whether input is int
             try: # Check for correct input type.
                 dest_field_no = int(input(dest_text))
             except (ValueError, KeyboardInterrupt, EOFError):
@@ -252,9 +252,9 @@ class Factory:
                 continue
 
             break
+
         dest_field.set_vat(vat_to_transfer)
         source_field.delete_vat()
-            # break
 
         return f"{vat_to_transfer} was moved to {dest_field.get_name()}"
 
@@ -265,17 +265,7 @@ class Factory:
             str : Informing whether the operation was succesful or not.
         """
         print("Which Test Fixture would you like to start? ")
-        for idx, field in enumerate(self.factory_fields):
-            if not field.get_name().startswith(TEST_FIXTURE_ID):
-                continue
-            if field.get_vat() is None:
-                print(f"--. {field.get_name()} - has no Vat")
-                continue
-            # Print Test Fields, with a Vat inside.
-            print(f"{idx}. {field.get_name()} - {field.get_vat()}")
-        print("Enter 100, if you want to cancel this operation\n")
-
-        # TODO 100 - hardcoded var
+        self.provide_fields_for_methods(TEST_FIXTURE_ID, True)
 
         while True:
             try: # Check for correct input type.
@@ -296,6 +286,8 @@ class Factory:
                 print("Selected Field has no Vat! Try again")
                 continue
 
+            # TODO prevent double testing of a Vat
+            
             if test_field.test_vat():
                 return "Vat has passed The Great Trial!"
             else:

@@ -41,7 +41,7 @@ FACTORY_FIELDS_NAMES = (INPUT_ID,
 # Dictionary containing menu options and sections dividers.
 # To Do - rules - str dividers, int options, "(X <-> Y)" for Factory Field, 
 TEXT_MENU = {
-    "Vat": "---------- Vat operations ----------",
+    "No.": "---------- Vat operations ----------",
     1: ADD_INPUT_VAT_ID + " Input new Vat to In",
     2: DEL_OUTPUT_VAT_ID + " Move OK Vat from Out",
     3: MOVE_VAT_ID + " Transfer Vat between Fields",

@@ -12,12 +12,12 @@ Constants:
 import random
 
 # Vat models - keys must be integers!
-VAT_MODELS = {
-    1: "900  x 900  x 600",
-    2: "1200 x 1500 x 900",
-    3: "1600 x 2000 x 1200",
-    4: "2000 x 2400 x 1600",
-}
+VAT_MODELS = (
+    1, #: "900  x 900  x 600",
+    2, #: "1200 x 1500 x 900",
+    3, #: "1600 x 2000 x 1200",
+    4, #: "2000 x 2400 x 1600",
+)
 """VAT_MODELS contains example model sizes of the vats."""
 
 BARCODE_MIN = 1
@@ -42,7 +42,10 @@ class Vat:
                                     in range  of keys of the dictionary.
             init_test_result (float) : Initial value of air pressure during tests.
         """
-        self.model = VAT_MODELS.get(declared_model, 1)
+        if declared_model in VAT_MODELS:
+            self.model = declared_model
+        else:
+            raise ValueError("Incorrect Vat model!")
 
         self.barcode = random.randint(BARCODE_MIN, BARCODE_MAX)
         self.test_result = init_test_result
@@ -58,7 +61,7 @@ class Vat:
         return self.barcode
 
     def get_test_result(self):
-        """Based on test_result(None, False, True), return according str."""
+        """Based on test_result return str ("---", "Pos", "Neg")."""
         match self.test_result:
             case None:
                 return "---"

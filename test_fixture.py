@@ -50,42 +50,55 @@ class TestFixture(FactoryField):
         X = [0.0]
         t = [0.0]
         time_interwal = 0.1 # in sec
-        a = self.get_vat().get_model()*100
+        # a = self.get_vat().get_model()*1
         target_vessel_pressure = self.pressure
 
         # Initial curve - S-curve
         while (X[-1] < target_vessel_pressure):
+            
+            # For visual debug TODO delete later
             print(X[-1], round(t[-1], 1))
-            t.append(t[-1] + time_interwal)
 
+            t.append(t[-1] + time_interwal)
             # Sigmoid function - shifted to start from 0 and with "a" coeff.
-            simulating_function = (1/(1 + e**((-t[-1]) + e**2)))**a
-            X.append(round(target_vessel_pressure*simulating_function, 3))
-            # HARDCODED VAR
+            simulating_function = (1/(1 + e**(e**2 - t[-1])))
+            X.append(round(target_vessel_pressure * simulating_function, 3))
+            
+            # Chance that a leakage will appear now, and prevent further
+            # pressure build up. As pressure is closing to the target, 
+            # this becomes more likely.
+            # TODO HARDCODED VAR
             if random() < 0.005*(X[-1]/target_vessel_pressure):
-                target_vessel_pressure = X[-1] # Used in main curve!
+                target_vessel_pressure = X[-1] # Used in the main curve!
                 break
 
         # Main curve - flat value
-        # HARDCODED VAR
+        # TODO HARDCODED VAR
         test_time = 30 + 15 # 15 sec - S-curve approx. time
         while(t[-1] <= test_time):
+
+            # For visual debug TODO delete later
             print(X[-1], round(t[-1], 1))
+
             t.append(t[-1] + time_interwal)
-            X.append(round(X[-1], 2))
-            # Chance of malfunction is propotional to elapsed time 
+            X.append(X[-1])
+            # Chance of leakage is propotional to elapsed time 
             # and inversely propotional to leaked pressure.
-            # HARDCODED VAR
-            if random() < 0.005*(t[-1]/test_time)*(self.pressure/X[-1]):
-                X_drop = random()*0.9*target_vessel_pressure
-                X[-1] -= round(X_drop, 2)
+            # TODO HARDCODED VAR
+            if random() < 0.005*(t[-1]/test_time)*0.1*(X[-1]/self.pressure):
+                X_drop = random()*0.4*target_vessel_pressure
+                X[-1] = round(X[-1] - X_drop, 3)
                 target_vessel_pressure = X[-1]
 
         plt.plot(t, X)
-        plt.show()
+        plt.savefig()
 
-        input("koko?:")
-        return True
+
+        # Return test result according to meeting pressure target.
+        if X[-1] >= 0.95*self.get_pressure():
+            return True
+        else:
+            return False
 
         # SIMPLE TEST PROCEDURE
         # test_time = 5

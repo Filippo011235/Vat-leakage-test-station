@@ -11,7 +11,6 @@ CORRECTION_ID = "Corr"
 TEST_FIXTURE_ID = "T"
 """Represents Test Fixture field, where Vats are being tested."""
 
-
 # For menu options:
 FINISH_CONST = 0
 """Integer used to break out of the menu loop and quit the program."""
@@ -26,11 +25,15 @@ MOVE_VAT_ID = "(<->)"
 TEST_VAT_ID = "Test"
 """Distinguishes "test Vat on Test Fixtures" menu option."""
 AUTO_MODE_ID = "Auto"
-"""Menu option for automatically doing basic operations(handles In, Out)"""
+"""Menu option for automatically doing basic operations(handles In, Out)."""
 
+# For saving test results as files:
+RESULTS_SAVE_DIR = "./Test results"
+"""Directory where tests result data will be saved."""
+TEST_FILE_CODE = ("VC", "DT", "TR", "TN")
+"""Code-names in file name to identify information about given test."""
 
 # Factory buffer fields names.
-# To Do - .startswidth("T") for TestFixture
 FACTORY_FIELDS_NAMES = (INPUT_ID,
                         CORRECTION_ID,
                         TEST_FIXTURE_ID + "1",
@@ -41,13 +44,13 @@ FACTORY_FIELDS_NAMES = (INPUT_ID,
 # Dictionary containing menu options and sections dividers.
 # To Do - rules - str dividers, int options, "(X <-> Y)" for Factory Field, 
 TEXT_MENU = {
-    "No.": "---------- Vat operations ----------",
-    1: ADD_INPUT_VAT_ID + " Input new Vat to In",
-    2: DEL_OUTPUT_VAT_ID + " Move OK Vat from Out",
-    3: MOVE_VAT_ID + " Transfer Vat between Fields",
-    4: TEST_VAT_ID + " Vat on a Test Fixture Field",
-    5: AUTO_MODE_ID + " mode (handle In and Out fields)",
+            "No.": "---------- Vat operations ----------",
+            1: ADD_INPUT_VAT_ID + " Input new Vat to In",
+            2: DEL_OUTPUT_VAT_ID + " Move OK Vat from Out",
+            3: MOVE_VAT_ID + " Transfer Vat between Fields",
+            4: TEST_VAT_ID + " Vat on a Test Fixture Field",
+            5: AUTO_MODE_ID + " mode (handle In and Out fields)",
 
-    "End": "---------- Finish program ----------",
-    FINISH_CONST: "Finish productive work shift :)",
-    }
+            "End": "---------- Finish program ----------",
+            FINISH_CONST: "Finish productive work shift :)",
+            }

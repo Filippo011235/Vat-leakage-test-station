@@ -36,6 +36,7 @@ Client would like to:
   2. Pressure versus time graph.
   3. Volume of air that had been pressed into a vat.
   4. How many times given vat had been tested.
+
 2. Have a monitor which displays:
   1. Amount of airtight vats (workpieces that passed the test on the first trial)
   2. Amount of leaky vats (workpieces that needed to be corrected)

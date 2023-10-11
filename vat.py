@@ -12,15 +12,16 @@ Constants:
 import random
 
 # Vat models - keys must be integers!
-VAT_MODELS = (
-    1, #: "900  x 900  x 600",
-    2, #: "1200 x 1500 x 900",
-    3, #: "1600 x 2000 x 1200",
-    4, #: "2000 x 2400 x 1600",
-)
-"""VAT_MODELS contains example model sizes of the vats."""
+VAT_MODELS = {
+    1: [0.15, 10],
+    2: [0.25, 15],
+    3: [0.35, 20],
+    4: [0.45, 25],
+}
+"""Holds all models and their values for pressure and time during tests."""
 
 BARCODE_MIN = 1
+"""Range for possible barcode values."""
 BARCODE_MAX = 1000
 """Range for possible barcode values."""
 
@@ -34,7 +35,7 @@ class Vat:
                                 True for positive result, False for negative.
     """
 
-    def __init__(self, declared_model = 1, init_test_result = None) -> None:
+    def __init__(self, declared_model: int=1, init_test_result = None, no_of_times_tested: int=0) -> None:
         """Initiate with a given model, test result and random barcode.
 
         Args:
@@ -42,13 +43,14 @@ class Vat:
                                     in range  of keys of the dictionary.
             init_test_result (float) : Initial value of air pressure during tests.
         """
-        if declared_model in VAT_MODELS:
+        if declared_model in VAT_MODELS.keys():
             self.model = declared_model
         else:
             raise ValueError("Incorrect Vat model!")
 
         self.barcode = random.randint(BARCODE_MIN, BARCODE_MAX)
         self.test_result = init_test_result
+        self.times_tested = no_of_times_tested
 
     def __str__(self):
         """Return str with vat barcode ID and test result"""
@@ -60,6 +62,9 @@ class Vat:
     def get_barcode(self):
         return self.barcode
 
+    def get_times_tested(self):
+        return self.times_tested
+
     def get_test_result(self):
         """Based on test_result return str ("---", "Pos", "Neg")."""
         match self.test_result:
@@ -70,5 +75,9 @@ class Vat:
             case False:
                 return "Neg"
 
+    def get_values_for_test(self):
+        return VAT_MODELS[self.get_model()]
+
     def set_test_result(self, vat_test_result: bool):
+        self.times_tested += 1
         self.test_result = vat_test_result

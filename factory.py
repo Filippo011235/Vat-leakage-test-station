@@ -86,7 +86,7 @@ class Factory:
 
             # Filter Fields with undesired Vat occupancy.
             # If field_ID is "", then don't filter according to Vat state.
-            if not isinstance(field.get_vat(), desired_state) and field_ID is not "":
+            if not isinstance(field.get_vat(), desired_state) and field_ID != "":
                 # For test Vat operation, inform that there is an empty Field.
                 if field_ID is TEST_FIXTURE_ID:
                     print(f"--. {field.get_name()} - has no Vat to test.")
@@ -136,7 +136,7 @@ class Factory:
             #         print("Enter correct model, silly!")
 
             # OPTION 2 - MAKING NEW VAT WITH A RAND MODEL:
-            vat_model_min, *_, vat_model_max = VAT_MODELS
+            vat_model_min, *_, vat_model_max = VAT_MODELS.keys()
             new_model = randint(vat_model_min, vat_model_max)
 
             input_field.set_vat(Vat(new_model))

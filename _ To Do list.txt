@@ -1,5 +1,3 @@
-- ReadMe
-- Docstrings
-- tests
-- visual app vs django web app?
-- data structure for Vessels? Queqed list?
+- Vats, add atribute - how many times was tested
+- After test update airtight/leaky Vats number
+- 

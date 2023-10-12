@@ -28,7 +28,7 @@ AUTO_MODE_ID = "Auto"
 """Menu option for automatically doing basic operations(handles In, Out)."""
 
 # For saving test results as files:
-RESULTS_SAVE_DIR = "./Test results"
+RESULTS_SAVE_DIR = ".\\Test results\\"
 """Directory where tests result data will be saved."""
 TEST_FILE_CODE = ("VC", "DT", "TR", "TN")
 """Code-names in file name to identify information about given test."""
@@ -42,7 +42,7 @@ FACTORY_FIELDS_NAMES = (INPUT_ID,
                         )
 
 # Dictionary containing menu options and sections dividers.
-# To Do - rules - str dividers, int options, "(X <-> Y)" for Factory Field, 
+# TODO - rules - str dividers, int options, "(X <-> Y)" for Factory Field, 
 TEXT_MENU = {
             "No.": "---------- Vat operations ----------",
             1: ADD_INPUT_VAT_ID + " Input new Vat to In",

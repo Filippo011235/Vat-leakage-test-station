@@ -1,4 +1,4 @@
-from text_data import (TEXT_MENU, FACTORY_FIELDS_NAMES, 
+from text_data import (TEXT_MENU, FACTORY_FIELDS_NAMES, TEST_VAT_ID,
                         FINISH_CONST, RESULTS_SAVE_DIR)
 from factory import Factory
 from test_data_handler import TestDataHandler
@@ -20,7 +20,12 @@ if __name__ == "__main__":
         # Do operations based on the user input, or skip it and finish loop.
         # Operations return string - their result, to be printed.
         print(vat_test_station.execute_user_input(user_input))
-        # if user_input == test vat ID: update test librarian
+
+        # Check whether test Vat option has been chosen.
+        if TEST_VAT_ID in TEXT_MENU[user_input]: 
+            # Update test data handler
+            test_results_handler.update_data()
+
         confirm_mechanism()
 
     # After finishing, clean directory with test results.

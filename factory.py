@@ -324,6 +324,7 @@ class Factory:
 
     def execute_user_input(self, users_wish):
         """Based on user input, and methods mapping, execute method."""
+        # Input verification was conducted in function from menu module.
         return self.methods_mapping[int(users_wish)]()
 
     def finish_entered_do_nothing(self):

@@ -1,3 +1,7 @@
 - Vats, add atribute - how many times was tested
 - After test update airtight/leaky Vats number
-- 
+- Class - "test librarian", kinda database?
+	- records tests, 
+	- handles CSV, 
+	- draws graphs, 
+	- keeps no. of airtight/leaky vat?

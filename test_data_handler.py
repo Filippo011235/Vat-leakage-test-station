@@ -5,7 +5,7 @@ Classes:
 """
 
 import matplotlib.pyplot as plt
-from os import path, listdir, remove
+from os import path, listdir, remove, stat
 import csv
 
 from text_data import TEST_FILE_CODE, RESULTS_SAVE_DIR
@@ -15,7 +15,7 @@ class TestDataHandler():
 
     Attributes:
         # tests_dir (str): Path to directory where .csv files are saved.
-        # tests_list (list): Stores conductated tests, as dictionaries with 
+        # tests_list (list): Stores conducted tests, as dictionaries with 
                             information un-coded from the filenames.
     """
 
@@ -34,13 +34,13 @@ class TestDataHandler():
 
         # TODO czy filename jest legit? 1) istnieje, 2) name correct?
 
-        test_data = file_name.split("_")
+        test_data = file_name.lstrip(self.tests_dir).split("_")
         # Iterate over every second field, stop at len-1, because of file ext.
         for idx in range(0, len(test_data)-1, 2):
             # idx holds data code name and idx+1 actual value.
             test_dict[test_data[idx]] = test_data[idx+1]
 
-        if test_dict.keys() != TEST_FILE_CODE:
+        if tuple(test_dict.keys()) != TEST_FILE_CODE:
             raise ValueError("Something went wrong in file naming!")
 
         print(test_dict) # For init debug, TODO delete
@@ -48,8 +48,22 @@ class TestDataHandler():
         self.tests_list.append(test_dict)
 
     def update_data(self):
-        """After new test was conducdated update tests_list with a new file."""
-        pass
+        """After new test was conducted update tests_list with a new file."""
+        files_list = listdir(self.tests_dir)
+        if len(files_list) > len(self.tests_list):
+            # Some new file is out there! Look at .csv files:
+            csv_list = [path.join(self.tests_dir, x) for x in files_list 
+                        if x.endswith(".csv")]
+            # Sort by creation time, in order to get the newest.
+            csv_sorted = sorted(csv_list, key=lambda t: stat(t).st_ctime)
+            newest_file = csv_sorted[-1]
+            if newest_file not in self.tests_list:
+                self.parse_test_file(newest_file)
+            else:
+                raise FileExistsError("Error while updating the files list.")
+
+        
+
 
     def draw_graph(self):
         """Draw graph of air pressure versus time, from data in a csv file."""

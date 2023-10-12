@@ -117,7 +117,7 @@ class TestFixture(FactoryField):
                                    TEST_FILE_CODE[2],
                                    self.current_vat.get_test_result(),
                                    TEST_FILE_CODE[3],
-                                   self.current_vat.get_times_tested(),
+                                   str(self.current_vat.get_times_tested()),
                                    ".csv"
                                    ])
         test_file_path = path.join(".", RESULTS_SAVE_DIR, test_file_name)

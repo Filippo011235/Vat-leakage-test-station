@@ -14,7 +14,7 @@ import csv
 
 from vat import Vat
 from factory_field import FactoryField
-from text_data import RESULTS_SAVE_DIR, TEST_FILE_CODE
+from text_data import RESULTS_SAVE_DIR, TEST_FILE_CODE, RESULTS_BUFFER_FILE
 
 POS_RESULT_THRESHOLD = 0.95
 """Min. percentage of pressure to declare test as positive."""
@@ -107,10 +107,13 @@ class TestFixture(FactoryField):
             outcome = True
         else:
             outcome = False
-
         self.current_vat.set_test_result(outcome)
-        test_timestamp = datetime.now().strftime("%d%m%y-%H%M%S")
-        test_file_name = "_".join([TEST_FILE_CODE[0], 
+
+        # In real life, test fixture would be connected with the PLC and send
+        # data packages to it. For simulation purposes, the data is being 
+        # written into the buffer file, from which Test Data Handler parses it.
+        test_timestamp = datetime.now().strftime("%d%m-%H%M%S")
+        test_file_header = "_".join([TEST_FILE_CODE[0], 
                                    str(self.get_vat().get_barcode()),
                                    TEST_FILE_CODE[1],
                                    test_timestamp,
@@ -118,16 +121,14 @@ class TestFixture(FactoryField):
                                    self.current_vat.get_test_result(),
                                    TEST_FILE_CODE[3],
                                    str(self.current_vat.get_times_tested()),
-                                   ".csv"
                                    ])
-        test_file_path = path.join(".", RESULTS_SAVE_DIR, test_file_name)
 
         pressure_versus_time = zip(t, X)
 
-        with open(test_file_path, "w", newline='') as f:
-            f_csv_writer = csv.writer(f)
-            for measurement in pressure_versus_time:
-                f_csv_writer.writerow(measurement)
+        buffer_file_path = path.join(RESULTS_SAVE_DIR, RESULTS_BUFFER_FILE)
+        with open(buffer_file_path, "w") as f:
+            f.write(test_file_header + "\n")
+            f.writelines([str(x)+"\n" for x in pressure_versus_time])
 
         return outcome
 

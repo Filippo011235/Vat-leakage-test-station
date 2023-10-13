@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from os import path, listdir, remove, stat
 import csv
 
-from text_data import TEST_FILE_CODE, RESULTS_SAVE_DIR
+from text_data import TEST_FILE_CODE, RESULTS_SAVE_DIR, RESULTS_BUFFER_FILE
 
 class TestDataHandler():
     """Handle test data, saved as csv files, and extract information from them.
@@ -28,15 +28,15 @@ class TestDataHandler():
         self.tests_dir = tests_results_dir
         self.tests_list = [] # Holds each test as a dict
 
-    def parse_test_file(self, file_name):
+    def parse_test_file(self, coded_test_data):
         """Analyse filename to extract info. about test, based on keywords."""
         test_dict = {}
 
         # TODO czy filename jest legit? 1) istnieje, 2) name correct?
 
-        test_data = file_name.lstrip(self.tests_dir).split("_")
-        # Iterate over every second field, stop at len-1, because of file ext.
-        for idx in range(0, len(test_data)-1, 2):
+        test_data = coded_test_data.split("_")
+        # Iterate over every second field.
+        for idx in range(0, len(test_data), 2):
             # idx holds data code name and idx+1 actual value.
             test_dict[test_data[idx]] = test_data[idx+1]
 
@@ -49,20 +49,41 @@ class TestDataHandler():
 
     def update_data(self):
         """After new test was conducted update tests_list with a new file."""
-        files_list = listdir(self.tests_dir)
-        if len(files_list) > len(self.tests_list):
-            # Some new file is out there! Look at .csv files:
-            csv_list = [path.join(self.tests_dir, x) for x in files_list 
-                        if x.endswith(".csv")]
-            # Sort by creation time, in order to get the newest.
-            csv_sorted = sorted(csv_list, key=lambda t: stat(t).st_ctime)
-            newest_file = csv_sorted[-1]
-            if newest_file not in self.tests_list:
-                self.parse_test_file(newest_file)
-            else:
-                raise FileExistsError("Error while updating the files list.")
+        press_vs_time_data = []
 
+        buffer_file_path = path.join(RESULTS_SAVE_DIR, RESULTS_BUFFER_FILE)
+        with open(buffer_file_path, "r") as f:
+            # First line contains data about the test.
+            buffer_test_header = f.readline().strip()
+            # Rest of the file contains pressure versus time relation.
+            for line in f:
+                press_vs_time_data.append(line)
+
+        # Uncode data about test and add it to the self.list of test.
+        self.parse_test_file(buffer_test_header)
+        # Prepare for creation of a csv file with graph data.
+        new_test_file_name = buffer_test_header + ".csv"
+        des_file = path.join(RESULTS_SAVE_DIR, new_test_file_name)
+        with open(des_file, "w") as f:
+            f_csv_writer = csv.writer(f)
+            for measurement in press_vs_time_data:
+                f_csv_writer.writerow(measurement)
         
+        # files_list = listdir(self.tests_dir)
+        # if len(files_list) > len(self.tests_list):
+        #     # Some new file is out there! Look at .csv files:
+        #     csv_list = [path.join(self.tests_dir, x) for x in files_list 
+        #                 if x.endswith(".csv")]
+        #     # Sort by creation time, in order to get the newest.
+        #     csv_sorted = sorted(csv_list, key=lambda t: stat(t).st_ctime)
+        #     newest_file = csv_sorted[-1]
+        #     if newest_file not in self.tests_list:
+        #         self.parse_test_file(newest_file)
+        #     else:
+        #         raise FileExistsError("Error while updating the files list.")
+
+        # Count airtight/leaky vats
+
 
 
     def draw_graph(self):

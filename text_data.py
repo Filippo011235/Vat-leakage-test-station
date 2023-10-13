@@ -30,6 +30,8 @@ AUTO_MODE_ID = "Auto"
 # For saving test results as files:
 RESULTS_SAVE_DIR = ".\\Test results\\"
 """Directory where tests result data will be saved."""
+RESULTS_BUFFER_FILE = "data_buffer.txt"
+"""Directory where tests result data will be saved."""
 TEST_FILE_CODE = ("VC", "DT", "TR", "TN")
 """Code-names in file name to identify information about given test."""
 
